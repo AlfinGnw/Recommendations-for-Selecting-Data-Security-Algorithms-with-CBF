@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hasil Rekomendasi | SecureAlgo</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="result-section">
+        <div class="container">
+            <header class="result-header">
+                <div class="logo">
+                    <i class="fas fa-lock"></i>
+                    <span>SecureAlgo</span>
+                </div>
+                <a href="/" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Kembali ke Pencarian
+                </a>
+            </header>
+
+            <main class="result-container">
+                <div class="search-summary">
+                    <div class="search-query-card">
+                        <i class="fas fa-search"></i>
+                        <div>
+                            <h2>Hasil Rekomendasi Untuk</h2>
+                            <p class="user-query">"{{ query }}"</p>
+                        </div>
+                    </div>
+                    <div class="result-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-algorithm"></i>
+                            <span>{{ recommendations|length }} Algoritma Direkomendasikan</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-star"></i>
+                            <span>Skor Tertinggi: {{ "%.2f"|format(recommendations[0].similarity) }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="result-grid">
+                    {% for algo in recommendations %}
+                    <div class="algorithm-card">
+                        <div class="card-header">
+                            <div class="algorithm-meta">
+                                <h3 class="algorithm-name">{{ algo.algoritma }}</h3>
+                                <div class="algorithm-score">
+                                    <span class="score-value">{{ "%.2f"|format(algo.similarity) }}</span>
+                                    <span class="score-label">Kecocokan</span>
+                                </div>
+                            </div>
+                            <div class="algorithm-type">
+                                <i class="fas fa-tag"></i>
+                                <span>{{ algo.tipe_data }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card-body">
+                            <div class="algorithm-title">
+                                <i class="fas fa-book-open"></i>
+                                <p>{{ algo.Judul }}</p>
+                            </div>
+                            
+                            <div class="algorithm-details">
+                                <div class="detail-toggle">
+                                    <input type="checkbox" id="detail-{{ loop.index }}" class="detail-toggle-input">
+                                    <label for="detail-{{ loop.index }}" class="detail-toggle-label">
+                                        <span>Detail Algoritma</span>
+                                        <i class="fas fa-chevron-down"></i>
+                                    </label>
+                                    <div class="detail-content">
+                                        <div class="pros-cons">
+                                            <div class="pros">
+                                                <h4><i class="fas fa-check-circle"></i> Kelebihan</h4>
+                                                <p>{{ algo.kelebihan }}</p>
+                                            </div>
+                                            <div class="cons">
+                                                <h4><i class="fas fa-exclamation-circle"></i> Kekurangan</h4>
+                                                <p>{{ algo.kekurangan }}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="result-actions">
+                    <a href="/" class="action-button refresh-button">
+                        <i class="fas fa-sync-alt"></i> Cari Kembali
+                    </a>
+                    <button class="action-button export-button">
+                        <i class="fas fa-file-export"></i> Ekspor Hasil
+                    </button>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced accordion functionality
+        document.querySelectorAll('.detail-toggle-input').forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                const content = this.closest('.detail-toggle').querySelector('.detail-content');
+                const icon = this.closest('.detail-toggle').querySelector('.fa-chevron-down');
+                
+                if (this.checked) {
+                    content.style.maxHeight = content.scrollHeight + 'px';
+                    icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+                } else {
+                    content.style.maxHeight = null;
+                    icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+                }
+            });
+            
+            // Initialize
+            if (toggle.checked) {
+                const content = toggle.closest('.detail-toggle').querySelector('.detail-content');
+                content.style.maxHeight = content.scrollHeight + 'px';
+            }
+        });
+    </script>
+</body>
+</html>
